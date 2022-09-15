@@ -288,23 +288,18 @@ while esc != '6':
     if esc == '1':
         os.system("cls")
         menu_inserir()
-
     elif esc == '2':
         os.system("cls")
         menu_deletar()
-
     elif esc == '3':
         os.system("cls")
         menu_atualizar()
-
     elif esc == '4':
         os.system("cls")
         menu_buscar()
-
     elif esc == '5':
         os.system("cls")
         menu_mostrar()
-
     elif esc == '6':
         print("\nFinalizando programa!")
     else:
