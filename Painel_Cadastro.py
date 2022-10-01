@@ -1,4 +1,4 @@
-from ConexaoCadastro import con, close, Error
+from Conexao import con, close, Error
 from time import sleep
 import os
 
