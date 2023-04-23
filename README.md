@@ -2,7 +2,7 @@
 
 ## Breve Resumo:
 
-Este é um Programa que cadastra um usuário no banco de dados mysql.
+Este é um Programa que cadastra um usuário no banco de dados mysql com o xampp.
 
 no programa pode-se modificar alguns valores como seu nome, email e a senha
 
