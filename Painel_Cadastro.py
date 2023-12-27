@@ -18,11 +18,11 @@ def menu_principal():
     print("+-------------------------------+")
 
 # Função para executar ações no banco de dados (INSERT, DELETE, UPDADE)
-def query(sql):
+def query(sql, value):
     try:
         vcon = con()
         cursor = vcon.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, value)
         vcon.commit()
     except Error as er:
         print(er)
@@ -30,15 +30,18 @@ def query(sql):
         vcon.close()
 
 # Função de exibir dados no banco de dados (SELECT)
-def consultar(sql):
+def consultar(sql, value=None):
+    # #verifica se 
+    # if value != None:
+    #     value = (value,)
     try:
         vcon = con()
         cursor = vcon.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, value)
         linha = cursor.fetchall()
         return linha
-    except:
-        print("Erro na Função consultar")
+    except Error as er:
+        print("Erro na Função consultar: ", er)
     finally:
         vcon.close()
 
@@ -55,8 +58,9 @@ def menu_inserir():
             print("Argumentos Em Falta!\n")
         else:
             break
-    sql = "INSERT INTO `user` VALUE (null,'"+vnome+"', '"+vemail+"', '"+vsenha+"');"
-    ret = query(sql)
+    sql = "INSERT INTO `user` VALUE (null, %s, %s, %s);"
+    value = (vnome, vemail, vsenha)
+    ret = query(sql, value)
     if ret == None:
         print("Usuário Cadastrado Com Sucesso!\n")
     else:
@@ -78,22 +82,24 @@ def menu_deletar():
             break
 
     cursor = vcon.cursor()
-    cursor.execute("SELECT * FROM `user` WHERE `id` = "+vid+" and `Nome` = '"+vnome+"' and `Senha` = '"+vsenha+"';")
-    linha = cursor.fetchone()
+    # cursor.execute("SELECT * FROM `user` WHERE `id` = %s and `Nome` = %s and `Senha` = %s;")
+    sql = "SELECT * FROM `user` WHERE id = %s and `Nome` = %s and `Senha` = %s;"
+    value = (vid, vnome, vsenha)
+    linha = consultar(sql, value)
     l = str(linha)
 
     if linha == None:
         print("Usuário Não Existe")
         os.system("pause")
     elif (vnome in l) and (vsenha in l) and (vid in l):
-        linha = list(linha)
+        l = list(linha)
         # Informações do usuário
         print("Suas Informações ::\n")
         print(f"""
-        ID: {linha[0]}
-        Nome: {linha[1]}
-        E-mail: {linha[2]}
-        Senha: {linha[3]}\n
+        ID: {l[0][0]}
+        Nome: {l[0][1]}
+        E-mail: {l[0][2]}
+        Senha: {l[0][3]}\n
         """)
 
         print("Deseja Excluir Permanentemente Sua Conta?")
@@ -102,8 +108,9 @@ def menu_deletar():
         esc = int(input("> "))
 
         if esc == 1:
-            vsql = "DELETE FROM `user` WHERE `id` = "+vid+" and `Nome` = '"+vnome+"' and `Senha` = '"+vsenha+"';"
-            query(vsql)
+            vsql = "DELETE FROM `user` WHERE `id` = %s and `Nome` = %s and `Senha` = %s;"
+            value = (vid, vnome, vsenha)
+            query(vsql, value)
             print("Sua Conta Foi Excluida!")
             sleep(1)
         elif esc == 2:
@@ -117,10 +124,17 @@ def menu_atualizar():
     # Pesquisa por 'ID' e 'SENHA'#
     vid = input("Digite O ID:")
     vsenha = input("Digite Sua Senha: ")
-    mostrar = "SELECT * FROM `user` WHERE `id` = "+vid+" and `Senha` = '"+vsenha+"';"
-    res = consultar(mostrar)
-    res = str(res)
-    print("\n",res,"\n")
+    mostrar = "SELECT * FROM `user` WHERE `id` = %s and `Senha` = %s;"
+    value = (vid, vsenha)
+    res = consultar(mostrar, value)
+
+    # Verifica se os dados colocados estão corretos
+    if res == []:
+        print("Dados Incorretos!")
+        os.system("pause")
+    else:
+        res = str(res)
+        print("\n",res,"\n")
 
     try:
         if vid in res and vsenha in res:
@@ -134,35 +148,41 @@ def menu_atualizar():
             # Alteração de Nome
             if esc == '1':
                 escN = input("Alterar Nome Para: ")
-                sql = "UPDATE `user` SET `Nome` = '"+escN+"' WHERE `id` = "+vid+";"
-                query(sql)
+                sql = "UPDATE `user` SET `Nome` = %s WHERE `id` = %s;"
+                value = (escN, vid)
+                query(sql, value)
 
             # Alteração de email
             elif esc == '2':
                 escE = input("Alterar E-mail Para: ")
-                sql = "UPDATE `user` SET `Email` = '"+escE+"' WHERE `id` = "+vid+";"
-                query(sql)
+                sql = "UPDATE `user` SET `Email` = %s WHERE `id` = %s;"
+                value = (escE, vid)
+                query(sql, value)
 
             # Alteração da senha
             elif esc == '3':
                 escS = input("Alterar Senha Para: ")
-                sql = "UPDATE `user` SET `Senha` = '"+escS+"' WHERE `id` = "+vid+";"
-                query(sql)
+                sql = "UPDATE `user` SET `Senha` = %s WHERE `id` = %s;"
+                value = (escS, vid)
+                query(sql, value)
 
             # Alteração de tudo
             elif esc == '4':
                 print("Alterar Tudo: ")
                 escN = input("Nome: ")
-                sql = "UPDATE `user` SET `Nome` = '"+escN+"' WHERE `id` = "+vid+";"
-                query(sql)
+                sql = "UPDATE `user` SET `Nome` = %s WHERE `id` = %s;"
+                value = (escN, vid)
+                query(sql, value)
 
                 escE = input("Email: ")
-                sql = "UPDATE `user` SET `Nome` = '"+escN+"' WHERE `id` = "+vid+";" 
-                query(sql)
+                sql = "UPDATE `user` SET `Email` = %s WHERE `id` = %s;"
+                value = (escE, vid)
+                query(sql, value)
 
                 escS = input("Senha: ")
-                sql = "UPDATE `user` SET `Nome` = '"+escN+"' WHERE `id` = "+vid+";"
-                query(sql)
+                sql = "UPDATE `user` SET `Senha` = %s WHERE `id` = %s;"
+                value = (escS, vid)
+                query(sql, value)
             else:
                 os.system("cls")
                 print("Saindo")
@@ -194,8 +214,10 @@ def menu_buscar():
             escB = '0'
             while escB != '2':
                 vid = input("ID: ")
-                sql = "SELECT * FROM `user` WHERE `id` = "+vid+";"
-                ret = consultar(sql)
+                sql = "SELECT * FROM `user` WHERE id = %s;"
+                value = (vid,)
+                ret = consultar(sql, value)
+                print()
                 res = str(ret)
 
                 if vid in res:
@@ -233,8 +255,9 @@ def menu_buscar():
             while escF != '2':
                 os.system("cls")
                 vnome = input("Nome: ")
-                sql = "SELECT * FROM `user` WHERE `Nome` = '"+vnome+"';"
-                ret = consultar(sql)
+                sql = "SELECT * FROM `user` WHERE `Nome` = %s;"
+                value = (vnome,)
+                ret = consultar(sql, value)
                 res = str(ret)
 
                 if vnome in res:
