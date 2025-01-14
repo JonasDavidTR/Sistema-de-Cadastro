@@ -14,7 +14,7 @@ assim como tbm é possível deletar o usuário
 
 - mysql
 
-O banco de Dados utilizado foi um no localhost nomeado "python" com apenas uma tabela "user",
+O banco de Dados utilizado foi mysql em ambiente de desenvolvimento nomeado "python" com apenas uma tabela "user",
 
 com suas respectivas colunas: id, nome, email e senha
 
@@ -26,6 +26,6 @@ Logo em seguida, criar uma tabela "user" com os seguintes valores: (`id` INT NOT
 
 
 
-IMPORTANTE USAR OS MESMOS VALORES CITADOS NAS INSTRUÇÕES ACIMA, PARA QUE O CÓDIGO FUNCIONE.
+É IMPORTANTE USAR OS MESMOS VALORES CITADOS NAS INSTRUÇÕES ACIMA PARA QUE O CÓDIGO FUNCIONE CORRETAMENTE.
 
 
